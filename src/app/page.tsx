@@ -2,8 +2,7 @@
 
 import { Button } from '@progress/kendo-react-buttons';
 
-import './page.module.scss'
-//import '@progress/kendo-theme-material/dist/all.scss';
+import './global.scss'
 
 export default function Home() {
   return (
