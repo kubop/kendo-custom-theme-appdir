@@ -1,5 +1,12 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { Inter } from 'next/font/google'
-import './global.scss'
+
+import { getCookie } from 'cookies-next';
+
+//import './Styles/global.scss'
+// import Styles from './Styles/Styles'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -13,9 +20,42 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const [loading, setLoading] = useState(true)
+  const [tenantId, setTenantId] = useState<string | undefined>(getCookie('tenantId')?.toString())
+
+  useEffect(() => {
+    console.log('Trying to import tenant specific styles')
+
+    if (tenantId === '1') {
+      import('./Styles/tenantA.scss').then(() => {
+        console.log('tenantA.scss loaded')
+        setLoading(false)
+      })
+    } else if(tenantId === '2') {
+      import('./Styles/tenantB.scss').then(() => {
+        console.log('tenantB.scss loaded')
+        setLoading(false)
+      })
+    } else {
+      import('./Styles/global.scss').then(() => {
+        console.log('global.scss loaded')
+        setLoading(false)
+      })
+    }
+
+    return () => {
+        console.log('unload?')
+    }
+  }, [tenantId]);
+  
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <p>This is in main layout</p>
+          {loading ? <div>Loading styles...</div> : children}
+          {/*{children}*/}
+        <p>All children are above this paragraph</p>
+      </body>
     </html>
   )
 }
